@@ -1,7 +1,7 @@
 # Today I Learned.
 오늘 배운 새로운 것들을 정리.
 
-# Commit message rule
+# Commit Message Rule
 ~~~
 - [#??] feat : 새로운 기능을 추가하였다.
 - [#??] fix : 어떠한 버그를 고쳤다.
