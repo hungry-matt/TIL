@@ -40,19 +40,17 @@ public class ArrayList {
     public Object remove(int index){
     	Object removed = elementData[index];
     	
-    	//���� �ۼ�
     	//for(int i = index ; i < size - 1; i++){
     	//	elementData[i] = elementData[i+1];
     	//}
     	
-    	//���� ����
+    	
     	for(int i = index + 1; i <= size -1 ; i++){
     		elementData[i-1] =  elementData[i];
     	}
     	
     	size--;
     	
-    	//������ ��ġ�� ������Ʈ�� ���������� ���� �Ѵ�.
     	elementData[size] = null;
     	return removed;
     }
