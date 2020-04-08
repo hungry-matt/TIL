@@ -1,3 +1,4 @@
+```java
 package list.arraylist.implementation;
 
 public class ArrayList {
@@ -39,19 +40,17 @@ public class ArrayList {
     public Object remove(int index){
     	Object removed = elementData[index];
     	
-    	//직접 작성
     	//for(int i = index ; i < size - 1; i++){
     	//	elementData[i] = elementData[i+1];
     	//}
     	
-    	//강의 내용
+    	
     	for(int i = index + 1; i <= size -1 ; i++){
     		elementData[i-1] =  elementData[i];
     	}
     	
     	size--;
     	
-    	//마지막 위치의 엘리먼트를 명시적으로 삭제 한다.
     	elementData[size] = null;
     	return removed;
     }
@@ -127,3 +126,4 @@ public class ArrayList {
     	}
     }
 }
+```
