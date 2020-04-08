@@ -1,3 +1,4 @@
+```java
 package list.arraylist.implementation;
 
 public class ArrayList {
@@ -39,19 +40,19 @@ public class ArrayList {
     public Object remove(int index){
     	Object removed = elementData[index];
     	
-    	//Á÷Á¢ ÀÛ¼º
+    	//ï¿½ï¿½ï¿½ï¿½ ï¿½Û¼ï¿½
     	//for(int i = index ; i < size - 1; i++){
     	//	elementData[i] = elementData[i+1];
     	//}
     	
-    	//°­ÀÇ ³»¿ë
+    	//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     	for(int i = index + 1; i <= size -1 ; i++){
     		elementData[i-1] =  elementData[i];
     	}
     	
     	size--;
     	
-    	//¸¶Áö¸· À§Ä¡ÀÇ ¿¤¸®¸ÕÆ®¸¦ ¸í½ÃÀûÀ¸·Î »èÁ¦ ÇÑ´Ù.
+    	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ñ´ï¿½.
     	elementData[size] = null;
     	return removed;
     }
@@ -127,3 +128,4 @@ public class ArrayList {
     	}
     }
 }
+```
