@@ -25,5 +25,29 @@ public class LinkedList {
             		tail = head;
         	}
     }
+	public void addLast(Object input){
+        Node newNode = new Node(input);
+        //리스트의 노드가 없다면 첫번째 노드를 추가 하는 메소드 호출
+        if(size == 0){
+            addFirst(input);
+        } else{
+            //마지막 노드의 다음을 새로 생성한 노드로 지정
+            tail.next = newNode;
+            //마지막 노드를 갱신
+            tail = newNode;
+            //엘리먼트 개수를 증가
+            size++;
+        }
+    }
+    Node node(int index){
+        //특정 위치의 노드 찾기
+        //첫번째 노드 확인
+        Node x = head;
+        //index 번째의 노드를 찾아 반환
+        for(int i=0 ; i < index ; i++){
+            x = x.next;
+        }
+        return x;
+    }
 }
 ~~~
