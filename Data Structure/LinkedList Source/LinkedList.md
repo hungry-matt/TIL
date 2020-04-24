@@ -49,5 +49,25 @@ public class LinkedList {
         }
         return x;
     }
+    //특정한 위치에 노드 추가
+    public void add(int k, Object input){
+        if(k == 0){
+            addFirst(input);
+        } else {
+            //추가 하려는 위치의 이전 노드
+            Node temp1 = node(k -1);
+            //추가 하려는 위치의 다음 노드
+            Node temp2 = temp1.next;
+            //추가될 노드
+            Node newNode = new Node(input);
+            temp1.next = newNode;
+            newNode.next = temp2;
+            size++;
+            //추가된 노드의 다음 노드가 null 일 경우
+            if(newNode.next == null){
+                tail = newNode;
+            }
+        }
+    }
 }
 ~~~
