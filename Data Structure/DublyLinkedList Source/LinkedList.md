@@ -200,14 +200,22 @@ public class DoublyLinkedList {
         }
     }
     Node node(int index){
-        //특정 위치의 노드 찾기
-        //첫번째 노드 확인
-        Node x = head;
-        //index 번째의 노드를 찾아 반환
-        for(int i=0 ; i < index ; i++){
-            x = x.next;
+        if(index > size/2){
+            //특정 위치의 노드 찾기
+            //첫번째 노드 확인
+            Node x = head;
+            //index 번째의 노드를 찾아 반환
+            for(int i=0 ; i < index ; i++){
+                x = x.next;
+            }
+            return x;
+        }else{
+            Node x = tail;
+            for(int i = size-1 ; i > index  ; i--){
+                x =  x.prev;
+            }
+            return x;
         }
-        return x;
     }
     //특정한 위치에 노드 추가
     public void add(int k, Object input){
@@ -222,6 +230,11 @@ public class DoublyLinkedList {
             Node newNode = new Node(input);
             temp1.next = newNode;
             newNode.next = temp2;
+            //temp2가 null이 아닐때 즉, temp1의 다음 노드가 없는지 확인
+            if(temp2 != null){
+                temp2.prev =  newNode;
+            }
+            newNode.prev = temp1;
             size++;
             //추가된 노드의 다음 노드가 null 일 경우
             if(newNode.next == null){
