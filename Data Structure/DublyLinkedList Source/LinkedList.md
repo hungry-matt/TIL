@@ -160,7 +160,14 @@ public class DoublyLinkedList {
                 //이전 노드의 다음을 신규 노드로 지정 한다.
                 lastReturned.next = newNode;
                 //next 노드를 신규 노드의 다음 으로 지정 한다.
-                newNode.next = next;
+                newNode.prev = lastReturned;
+                
+                if(next == null){
+                    tail = newNode;
+                } else {    
+                    newNode.next = next;
+                    next.prev = newNode;
+                }
             }
             //반환 노드를 생성된 노드로 지정
             lastReturned = newNode;
