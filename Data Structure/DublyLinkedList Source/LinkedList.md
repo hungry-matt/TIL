@@ -6,11 +6,15 @@ public class DoublyLinkedList {
     private Node tail; // 두번째 노드
     private int size = 0;
 
-    public Object removefirst() {
+    public Object removeFirst() {
         //첫번째 노드 탐색
         Node temp = head;
         //head의 위치를 next 노드로 변경
         head = head.next;
+        //첫번째 노드만 존재시 head 는 null 이다.
+        if(head != null){
+            head.prev = null;
+        }
         //삭제된 값을 리턴하기 위해 임시 변수에 담기
         Object returnData = temp.data;
         //노드 삭제
@@ -24,24 +28,31 @@ public class DoublyLinkedList {
     public Object remove(int k) {
         //첫번째 노드를 삭제할때
         if(k == 0){
-            return removefirst();
+            return removeFirst();
         }
         //삭제할 노드의 이전 노드 지정
         Node temp = node(k-1);
         //삭제할 노드 지정
         Node todoDeleted = temp.next;
-
-        //삭제할 노드의 다음 노드를 이전 노드의 다음으로 지정
+        //삭제 대상 노드를 연결에서 분리
         temp.next = temp.next.next;
-        //삭제될 데이터를 임시 변수에 담기
+        //삭제할 노드의 전후 노드를 연결
+        if(temp.next != null){
+            temp.next.prev = temp;
+        }
+        //삭제된 노드의 데이터를 리턴하기 위해 retunData에 데이터를 저장
         Object returnData = todoDeleted.data;
-        //삭제하려는 노드가 tail 이라면 이전 노드로 지정
+        //삭제된 노드가 tail 이라면 이전 노드로 지정
         if(todoDeleted == tail){
             tail = temp;
         }
         todoDeleted = null;
         size--;
         return returnData;
+    }
+
+    public Object removeLast(){
+        return remove(size-1);
     }
     
     //노드의 크기 반환
@@ -104,6 +115,21 @@ public class DoublyLinkedList {
             next = head;
         }
 
+        public boolean hasPrevious(){
+            return nextIndex > 0 ;
+        }
+
+        public Object previous(){
+             //next가 마지막 노드의 다음을 가리킬 경우 tail로 지정
+            if(next == null){
+                lastReturned = next = tail;
+            } else {
+                lastReturned = next = next.prev;
+            }
+            nextIndex--;
+            return lastReturned.data;
+        }
+
         //현재 노드의 데이터 반환과 다음 노드 지정
         public Object next(){
             lastReturned = next;
@@ -134,7 +160,14 @@ public class DoublyLinkedList {
                 //이전 노드의 다음을 신규 노드로 지정 한다.
                 lastReturned.next = newNode;
                 //next 노드를 신규 노드의 다음 으로 지정 한다.
-                newNode.next = next;
+                newNode.prev = lastReturned;
+                
+                if(next == null){
+                    tail = newNode;
+                } else {    
+                    newNode.next = next;
+                    next.prev = newNode;
+                }
             }
             //반환 노드를 생성된 노드로 지정
             lastReturned = newNode;
@@ -149,7 +182,33 @@ public class DoublyLinkedList {
             if(nextIndex == 0){
                 throw new IllegalStateException();
             }
-            DoublyLinkedList.this.remove(nextIndex-1);
+            
+            Node n = lastReturned.next;
+            Node p = lastReturned.prev;
+
+            if(p == null){
+                head = n;
+                head.prev = null;
+                lastReturned = null;
+            } else {
+                p.next = next;
+                lastReturned.prev = null;
+            }
+            
+            if(n == null){
+                tail = p;
+                tail.next = null;
+            } else {
+                n.prev = p;
+            }
+            
+            if(next == null){
+                lastReturned = tail;
+            } else {
+                lastReturned = next.prev;
+            }
+
+            size--;
             nextIndex--;
         }
     }
@@ -200,14 +259,22 @@ public class DoublyLinkedList {
         }
     }
     Node node(int index){
-        //특정 위치의 노드 찾기
-        //첫번째 노드 확인
-        Node x = head;
-        //index 번째의 노드를 찾아 반환
-        for(int i=0 ; i < index ; i++){
-            x = x.next;
+        if(index > size/2){
+            //특정 위치의 노드 찾기
+            //첫번째 노드 확인
+            Node x = head;
+            //index 번째의 노드를 찾아 반환
+            for(int i=0 ; i < index ; i++){
+                x = x.next;
+            }
+            return x;
+        }else{
+            Node x = tail;
+            for(int i = size-1 ; i > index  ; i--){
+                x =  x.prev;
+            }
+            return x;
         }
-        return x;
     }
     //특정한 위치에 노드 추가
     public void add(int k, Object input){
@@ -222,6 +289,11 @@ public class DoublyLinkedList {
             Node newNode = new Node(input);
             temp1.next = newNode;
             newNode.next = temp2;
+            //temp2가 null이 아닐때 즉, temp1의 다음 노드가 없는지 확인
+            if(temp2 != null){
+                temp2.prev =  newNode;
+            }
+            newNode.prev = temp1;
             size++;
             //추가된 노드의 다음 노드가 null 일 경우
             if(newNode.next == null){
