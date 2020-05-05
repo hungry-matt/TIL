@@ -182,7 +182,33 @@ public class DoublyLinkedList {
             if(nextIndex == 0){
                 throw new IllegalStateException();
             }
-            DoublyLinkedList.this.remove(nextIndex-1);
+            
+            Node n = lastReturned.next;
+            Node p = lastReturned.prev;
+
+            if(p == null){
+                head = n;
+                head.prev = null;
+                lastReturned = null;
+            } else {
+                p.next = next;
+                lastReturned.prev = null;
+            }
+            
+            if(n == null){
+                tail = p;
+                tail.next = null;
+            } else {
+                n.prev = p;
+            }
+            
+            if(next == null){
+                lastReturned = tail;
+            } else {
+                lastReturned = next.prev;
+            }
+
+            size--;
             nextIndex--;
         }
     }
