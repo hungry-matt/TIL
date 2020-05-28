@@ -34,3 +34,7 @@ class Solution {
     }
 }
 ~~~
+
+- Array.copyOf(원본배열, 복사할 길이)
+
+- Array.copyOfRange(원본배열, 복사할 시작 인덱스, 복사할 마지막 인덱스)
