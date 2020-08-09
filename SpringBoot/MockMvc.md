@@ -11,6 +11,9 @@
 ## params(info)
 - 키=값의 파라미터를 전달할 수 있다.
 - 여러 개일 때는 params()를, 하나일 때에는 param()을 사용 한다.
+- param("name", name);
+- 단, 값은 String 만 허용 한다. 
+- param("amount", String.valueOf(amount));
 
 ## andExpect()
 - 응답을 검증하는 역할을 한다.
