@@ -38,16 +38,16 @@ public boolean equals(Object obj) {
 ```java
 HashSet hashSet = new HashSet();
 
-Memeber lee = new Member(1000, "lee");
-Memeber kim = new Member(1000, "kim");
+Memeber lee = new Member(100, "lee");
+Memeber kim = new Member(100, "kim");
 
 hashSet.add(lee);
 hsashSet.add(kim);
 
 Iterator ir = hashSet.iterator();
 ~~~중략~~~
-//lee 의 아이디는 1000번 입니다.
-//kim 의 아이디는 1000번 입니다.
+//lee 의 아이디는 100번 입니다.
+//kim 의 아이디는 100번 입니다.
 ```
 
 ### 왜 중복된 아이디가 나올까요?
@@ -62,5 +62,24 @@ Iterator ir = hashSet.iterator();
 @Override
 public int hashCode() {
     return this.id;
+}
+
+public static void main(String[] args) {
+
+    MemberHashSet hashSet = new MemberHashSet();
+
+    Member lee = new Member(100, "lee");
+    Member kim = new Member(200, "kim");
+    Member hong = new Member(100, "hong");
+
+    hashSet.addMember(lee);
+    hashSet.addMember(kim);
+    hashSet.addMember(hong);
+
+    hashSet.show(); //Iterator
+
+    //lee 의 아이디는 100번 입니다.
+    //kim 의 아이디는 200번 입니다.
+
 }
 ```
