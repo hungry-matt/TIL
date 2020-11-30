@@ -3,7 +3,7 @@
 
 이때, getProperty(key)를 이용하여 각종 정보를 알 수 있다.
 
-```java
+```java 
 public void getProperty() {
     System.getProperty("line.separator");
 }
