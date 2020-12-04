@@ -108,3 +108,85 @@ public int hashCode() {
 >재정의 하지 않으면 메모리 주소 값을 사용해서 해쉬 값을 만듭니다.<br>
 >특정 값을 기준으로 같은 해쉬 코드를 얻을 수 있고,<br>
 >이는 해쉬 값을 사용하는 컬렉션 등에서 객체를 비교하는 용도로 사용됩니다.
+
+재정의 한 equlas 메소드와 hashCode 메소드를 Test 해봅시다.
+
+```java
+@Test
+public void isPointAttributesEquals(){
+    Point point1 = new Point(1, 2);
+    Point point2 = new Point(1, 2);
+    
+    //point1 == point2
+    Assertions.assertThat(point1.equals(point2)).isTrue();
+    //point1.hashCode() == point2.hashCode()
+    Assertions.assertThat(point1.hashCode() == point2.hashCode()).isTrue();
+}
+```
+
+이처럼 equals 메소드와 hashCode 메소드를 재정의하면, VO를 사용할 때 속성값이 같은 객체임을 보장하면서 VO를 사용할 수 있습니다.
+
+### 2. 수정자(Setter)가 없는 불변(Immutable) 객체
+>Entity와 같은 경우 별도의 식별 값을 가지고 있기 때문에 내부 속성 값이 변경된다고 하더라도
+>같은 객체로 계속 인식하고 추적할 수 있습니다.<br>
+>하지만 속성 값 자체가 식별 값인 VO는 속겅 값이 바뀌게 되면 식별 값도 바뀌게 되어 추적이 불가능하고,<br>
+>복사 될 때는 의도치 않은 객체들이 함께 변경되는 문제를 유발합니다.<br>
+>따라서 VO는 값을 변경할 수 없는 불변 객체로 만들어야 합니다. <br>
+
+예시를 통해 불변 객체로 만들어야 하는 이유를 알아봅시다.
+
+```java
+@Getter
+@Setter
+@NoArgsConsructor
+@EqualsAndHashCode
+@ToString
+public class Subsidy{
+    private String country;
+    private String category;
+    private int familyCount;
+}
+
+@Test
+public void 보조금지급() {
+    Subsidy 첫번째가구 = new Subsidy();
+    첫번째가구.setCountry("한국");
+    첫번째가구.setCategory("근로장려금");
+    첫번째가구.setFamilyCount(1);
+    
+    System.out.println("첫번째가구:" + 첫번째가구);
+    //첫번째가구 = (country=한국, category=근로장려금, familyCount=1)
+
+    Subsidy 두번째가구 = 첫번째가구;
+    System.out.println("두번째가구:" + 두번째가구);
+    //두번째가구 = (country=한국, category=근로장려금, familyCount=1)
+
+    두번째가구.setCategory("자녀장려금");
+    두번째가구.setFamilyCount(4);
+
+    System.out.println("첫번째가구:" + 첫번째가구);
+    System.out.println("두번째가구:" + 두번째가구);
+    //첫번째가구 = (country=한국, category=자녀장려금, familyCount=4)
+    //두번째가구 = (country=한국, category=자녀장려금, familyCount=4)
+    
+}
+```
+
+>국가의 보조금을 정하는 국가이름, 보조금 범주, 가족 수를 값으로 갖는 Subsidy라는 VO를 만들었습니다.<br>
+>두 가구의 보조금 신청이 들어왔고, 같은 1인가구 근로장려금을 신청하여 객체를 복사하여 사용했습니다.<br>
+>어차피 같은 보조금이고 가족 수가 값으니 문제될 게 없다고 생각 했습니다.<br>
+>
+>그런데 이 때, 두 번째 가구의 심사 결과가 4인가구의 자녀장려금 대상자로 나왔습니다.<br>
+>분명 두 번째 가구의 내용만 변경했을 뿐인데, 출력된 결과를 살펴보면, 첫 번째 가구까지 4인 가구 자녀장려금으로 보조금이 변경되었습니다.<br>
+>
+>문제의 시작은 사용할 값이 같다고 해서 첫 번째 가구 값을 두 번째 가국에 그대로 복사한 곳 입니다.<br>
+>현재 두 번째 가구는 첫 번째 가구 값을 복사한 것이 아닌 참조하고 있는 메모리 주소를 복사했기 때문에<br>
+>보조금 내용이 바뀌면 메모리 안에 저장된 실제 값이 변경됩니다.<br>
+>당연히 같은 메모리를 참조하고 있는 첫 번째 가구의 내용도 변경된 값을 가리키게 되는 것 입니다.
+
+이러한 치명적인 오류를 방지하기 위해서 VO는 한번 설정된 값이 변하지 않도록 해야 합니다.<br>
+즉, 값을  변경할 수 있는 수정자(Setter)가 없어야 합니다.
+
+그럼 수정자 없이 어떻게 VO에 값을 설정할까요?<br>
+생정자를 통해 객체가 생성될 때, 값이 한 번만 할당되고 이후로는 변경되지 않도록 만들 수 있습니다.<br>
+생성자를 통해서 Subsidy 객체를 불변(Immutable)로 만들면 위와 같은 문제를 해결할 수 있습니다.
