@@ -14,5 +14,5 @@ HEADER.PAYLOAD.SIGATURE
 헤더, 페이로드, 서명 세부분을 점(.)으로 구분하는 구조이다.
 
 ### 참고
-- https://velopert.com/2389
-- https://meetup.toast.com/posts/239
+- [JWT-초급](https://velopert.com/2389)
+- [JWT-고급](https://meetup.toast.com/posts/239)
