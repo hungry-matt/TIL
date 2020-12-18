@@ -10,3 +10,15 @@
 
 ## 인가 (Authorization)
 인가란 리소스에 대한 접근 권한 및 정책을 지정하는 기능
+
+## HTTP 관련 인증, 보안 설정
+메소드 | 기능
+---|---
+permitAll() | 모든 접속 허가
+hasAnyAuthority() | 해당 권한을 가진 유저만 접속 가능
+anyRequest().authenticated() | 나머지 URL은 인증을 거쳐야 함
+.csrf().ignoringAntMatchers("/user/save") | CSRF 토큰 없이 실행
+defaultSuccessURL("/") | 로그인이 성공 되면 해당 URL로 이동
+logoutRequestMatcher(new AntPathRequestMatcher("/logout")) | 해당 '/logout'을 받으면 로그아웃
+.deleteCookies("JSESSIONID") | JSESSIONID 삭제
+accessDeniedPage("/access-denied") | 권한이 없는 URL에 접속하려고 하면 해당 URL로 리다이렉션
