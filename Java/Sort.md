@@ -1,3 +1,8 @@
+# Comparator & Comparable
+- 둘다 정렬의 기준을 정의 함
+- Comparator는 객체간의 특정한 정렬이 필요할 때 인터페이스를 확장하여 특정 기준을 정의 하는 compare() 메소드를 구현
+- Comparable은 객체간의 일반적인 정렬이 필요할 때 인터페이스를 확장하여 정렬의 기준을 정의 하는 compareTo() 메소드를 구현
+
 # Comparable 
 
 정렬에 앞서 리스트 속 데이터 간 크기 비교가 가능 해야 한다.
