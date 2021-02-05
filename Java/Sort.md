@@ -37,3 +37,17 @@ list.sort(new Comparator<String>() {
 })
 ```
 
+```java
+List<Map<String, Object>> listMap = new ArrayList<>();
+
+Collections.sort(listMap, new Comparator<String>() {
+    @Override
+    public int compare(Map<String, Object> o1, Map<String, Object> o2) {
+        String name1 = o1.get("name").toString();
+        String name2 = o2.get("name").toString();
+
+        return name1.compareTo(name2);
+    }
+})
+```
+
