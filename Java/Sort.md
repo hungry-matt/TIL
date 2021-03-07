@@ -40,7 +40,7 @@ list.sort(new Comparator<String>() {
 ```java
 List<Map<String, Object>> listMap = new ArrayList<>();
 
-Collections.sort(listMap, new Comparator<String>() {
+Collections.sort(listMap, new Comparator<Map<String, Object>>() {
     @Override
     public int compare(Map<String, Object> o1, Map<String, Object> o2) {
         String name1 = o1.get("name").toString();
@@ -51,3 +51,28 @@ Collections.sort(listMap, new Comparator<String>() {
 })
 ```
 
+```java
+//숫자 타입으로 정렬
+List<Map<String, Object>> listMap = new ArrayList<>();
+
+Collections.sort(listMap, new Comparator<Map<String, Object>>()) {
+    @Override
+    public int compare(Map<String, Object> o1, Map<String, Object> o2) {
+        return Integer.compare((Integer)o2.get("num"), (Integer)o1.get("num"));
+    }
+})
+```
+
+```java
+//Map 정렬
+Map<String, Integer> map = ....
+
+List<Map.Entry<String, Integer>> listMap = new ArrayList<>(map.entrySet());
+
+Collections.sort(listMap, new Comparator(Map.Entry<String, Integer>()){
+    @Override
+    public int compare(Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2) {
+        return o1.getValue() - o2.getValue();
+    }
+});
+```
