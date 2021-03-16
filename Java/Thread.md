@@ -88,7 +88,7 @@ Thread 클래스 소스를 살펴보면 Thread(Runaable target) 생성자 호출
     }
 ```
 
-run() 메서드는 JVM만이 호출 가능하며 run()이 호출되면 참조변수 target을 통해서 Runnable 인터페이스에서 구현한 run()이 호출 된다. 이렇게 하면 Thread 클래스를 상속 받아 오버라이딩 하지 않고도 외부에서 구현할 수 있다.
+Thread 클래스의 run() 메서드는 JVM만이 호출 가능하며 run()이 호출되면 참조변수 target을 통해서 Runnable 인터페이스에서 구현한 run()이 호출 된다. 이렇게 하면 Thread 클래스를 상속 받아 오버라이딩 하지 않고도 외부에서 구현할 수 있다.
 ```java
  /**
      * If this thread was constructed using a separate
