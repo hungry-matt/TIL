@@ -5,3 +5,22 @@
 
 # 박싱과 언박싱이란?
 기본 자료형(Primitive data type)을 Wrapper class 로 바꾸어 주는 것을 `박싱`, Wrapper class 를 기본 자료형(Primitive data type)으로 바꿔주는 것을 `언박싱` 이라고 합니다.
+
+# HashMap vs HashTable vs ConcurrentHashMap
+- HashMap
+    - 주요 메서드에 `synchronized 키워드`가 `없습니다`.
+    - key, value에 null을 입력할 수 있습니다.
+    
+- HashTable
+    - 주요 메서드에 `synchronized 키워드`가 선언되어 `있습니다.`
+    - key, value에 null을 허용하지 않습니다.
+
+- ConcurrentHashMap
+    - HashMap을 thread-safe 하도록 만든 클래스
+    - key, value에 null을 허용하지 않습니다.
+    
+# 접근 제어자
+- public : 어디서든 접근이 가능합니다.
+- protected : 동일 패키지 혹은 상속받은 외부 패키지 클래스에서 사용 가능합니다.
+- (default) : 동일 패키지 내에서만 접근 가능합니다.
+- private : 해당 클래스 내에서만 접근 가능합니다.  
