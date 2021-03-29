@@ -35,3 +35,17 @@
     - 추상 메서드 1개 이상, 일반 변수, 일반 메서드 선언 가능
     - 생성자, 일반 변수 가질 수 있음
     - 메서드의 부분 구현이 가능
+    
+# String vs StringBuffer vs StringBuilder
+- String
+    - immutable(불변)
+    - 객체를 한 번 할당시 메모리 공간에 변동이 없다. (할당시 Heap String Pool 영역에 생성되어 그 값을 계속 사용한다.)
+    - 동기화를 신경쓰지 않아도 된다.
+    - 엄청나게 많은 문자열을 선언 및 연산시 성능 저하를 고려해야 한다.
+- StringBuffer
+    - mutable(가변)
+    - 각 메서드별로 Synchronized Keyword가 존재 한다.
+    - 멀티 스레드 환경에서도 동기화를 지원 한다. (thread-safe)
+- StringBuilder
+    - mutable(가변)
+    - 동기화를 지원하지 않는다.
