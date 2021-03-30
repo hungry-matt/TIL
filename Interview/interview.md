@@ -49,3 +49,28 @@
 - StringBuilder
     - mutable(가변)
     - 동기화를 지원하지 않는다.
+
+# try-with-resources ?
+- try-with-resources는 `자동으로 자원을 해제` 해주는 기능이다.
+- try에서 선언된 객체가 AutoCloseable을 구현했다면 Java는 try구문이 종료될 때 객체의 close() 메서드를 호출한다.
+
+# Synchronized ?
+- 여러 개의 스레드가 하나의 자원에 접근하려 할 때 단 `하나의 스레드`만 접근 가능하도록 하는 것이다.
+- 공동의 자원을 다른 스레드가 동시에 수정하게 되면 심각한 문제가 발생할 수 있다.
+
+# Synchronized를 하기 위한 방법
+- synchronized 함수를 만들어 사용한다.
+```java
+synchrozined public void set() {
+    ...
+}
+```
+
+- synchronized 블록을 사용한다.
+```java
+public void set() {
+    synchronized (this) {
+        ...
+    }
+}
+```
