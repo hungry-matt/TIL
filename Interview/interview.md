@@ -89,3 +89,6 @@ public void set() {
     - JVM은 `메서드가 호출 되면`, 메서드의 호출과 관련되는 `지역변수, 매개변수`를 `스택 영역에 저장`한다.
     - 스택 영역은 `메서드의 호출`과 함께 할당되며 메서드 `호출이 완료되면 소멸한다`.
     - 스택은 후입선출(LIFO, Last-In First-Out) 방식에 따라 동작하므로, 가장 늦게 저장된 데이터가 가장 먼저 인출 된다.
+
+ <img src="https://user-images.githubusercontent.com/45548349/113164917-83d05280-927c-11eb-9240-ffa679953a72.jpg" width="400" height="400">
+
