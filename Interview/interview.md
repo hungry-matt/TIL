@@ -109,3 +109,7 @@ public void set() {
 List | 순서가 있는 데이터의 집합. 데이터의 중복을 허용. | Vector, ArrayList, LinkedList, Stack, Queue
 Set | 순서가 없는 데이터의 집합. 데이터의 중복을 허용하지 않음. | HashSet, TreeSet
 Map<K, V> | 키와 값의 쌍으로 이루어지는 데이터의 집합. 순서가 없음. 키는 중복을 허용하지 않지만, 값은 중복 허용. | HashMap, TreeMap, HashTable, Properties
+
+# 제네릭 ?
+- 클래스나 메서드에서 사용할 내부 데이터 타입을 컴파일 시에 미리 지정하는 방법이다.
+- 이렇게 컴파일 시에 미리 타입 검사를 수행 하면 객체 타입의 안정성을 높이고 반환값에 대한 타입 변환 및 타입 검사에 들어가는 노력을 줄일 수 있다.
