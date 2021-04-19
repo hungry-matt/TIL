@@ -53,7 +53,7 @@ public Object someMethod() {
     throw new RetryFailedException();
 }
 ```
-- 예외복구의 핵심은 예외가 발생하여도 애플리케이션은 정장적인 흐름으로 진행된다는 것이다.
+- 예외복구의 핵심은 `예외가 발생하여도` 애플리케이션은 `정상적인 흐름으로 진행`된다는 것이다.
 - 위 예제는 네트워크 환경이 좋지 않아서 서버에 접속이 안되는 상황의 시스템에 적용하면 효율적이다.
 - 예외가 발생하면 일정 시간만큼 대기하고 다시 재시도를 반복한다.
 - 최대 재시도 횟수를 넘기면 예외를 발생시킨다.
@@ -61,9 +61,59 @@ public Object someMethod() {
 ### 예외 처리 회피
 처리를 하지 않고 호출한 쪽으로 던져버린다.
 
+```java
+//예시 1
+public void add() throws SQLException {
+    ...
+}
+
+//예시 2
+public void add() throws SQLException {
+    try {
+
+    } catch (SQLException e) {
+        // 다른 처리를 하고 다시 예외를 던진다.
+        throw e;
+    }    
+}
+```
+
+- 위 예제는 간단해 보이지만 아주 신중해야하는 로직이다.
+- 예외가 발생하면 throws를 통해 호출한쪽으로 예외를 던지고 그 처리를 회피한다.
+- 무책임하게 던지는 것은 위험하며 호출한 쪽에서 다시 예외를 받아 처리하도록 하거나, 해당 메소드에서 이 예외를 던지는 것이 최선의 방법이라는 확신이 있을 때만 사용해야 한다.
+
 ### 예외 전환
 호출한 쪽으로 던질 때 명확한 의미를 전달하기 위해 다른 예외로 전환하여 던진다.
 
+```java
+// 조금 더 명확한 예외로 던진다.
+public void add(User user) throws DuplicateUserIdException, SQLException {
+    try {
+        ...
+    } catch (SQLException e) {
+        if (e.gerErrorCode() == MysqlErrorNumbers.ER_DUP_ENTRY) {
+            throw DuplicateUserIdException();
+        } else {
+            throw e;
+        }
+    }
+}
+
+// 예외를 단순하게 포장한다.
+public void someMethod() {
+    try {
+        ...
+    } catch (SQLException se) {
+        throw new EJBException(se);
+    } catch (RemoteException re) {
+        throw new EJBException(re);
+    }
+}
+```
+
+- 예외처리 회피와 비슷하게 메서드 밖으로 예외를 던지지만, 그냥 던지지 않고 적절한 예외로 전환하여 넘기는 방법이다.
+- 명확한 의미로 전달되기 위해 적합한 의미를 가진 예외로 변경한다.
+- 예외 처리를 단순하게 만들기 위해 포장(Wrap) 할 수도 있다.
 
 ## 참고
 - [자바 예외 구분](https://madplay.github.io/post/java-checked-unchecked-exceptions)
