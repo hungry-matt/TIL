@@ -8,6 +8,7 @@
 - `오류`는 시스템에 무엇인가 `비정상적인 상황이 생겼을 경우`에 발생됨.
 - 이는 시스템 레벨에서 발생하기 때문에 심각한 수준의 오류이다.
 - 개발자가 미리 예측하여 처리할 수 없음.
+- OutOfMemoryError나 ThreadDeath 같은 에러는 catch 블록으로 잡아봤자 대응 방법이 없음.
 
 # Exception Class
 - 모든 예외 클래스는 `Throwable 클래스를 상속` 받고 있다.
@@ -15,9 +16,20 @@
 
 ## Checked Exception vs Unchecked Exception
 - 간단하게 `RuntimeException`을 `상속하지 않은 클래스는 Checked Exception`, 반대로 `상속한 클래스는 Unchecked Exception`으로 분류.
-- Checked Exception과 Unchecked Exception의 가장 명확한 구분 기준은 '꼭 처리를 해야 하느냐'이다.
-- Checked Exception이 발생할 가능성이 있는 메소드라면 반드시 로직을 try/catch로 감싸거나 throw로 던져서 처리해야 한다.
+- Checked Exception과 Unchecked Exception의 가장 명확한 구분 기준은 `'꼭 처리를 해야 하느냐'`이다.
+
+### Exception과 체크 예외
+- Exception 클래스와 그 서브클래스로 정의되는 예외들은 에러와 달리 개발자들이 만든 애플리케이션 코드의 작업 중에 예외상황이 발생했을 경우 사용된다.
+- 일반적으로 예외라고 하면 `RuntimeException을 상속하지 않은` 것만을 말하는 체크 예외라고 생각해도 된다.
+- `체크예외가 발생할 수 있는` 메소드라면 반드시 로직을 try/catch로 감싸거나 throw로 던져서 처리해야 한다. 그렇지 않으면 컴파일 에러가 발생한다.
+- 자바 언어와 JDK 초기 설계자들은 체크 예외를 발생 가능한 예외에 모두 적용하려 했던 것 같다. 그래서 IOException이나 SQLException을 비롯해서 예외적인 상황에서 `던져질 가능성이 있는것들은 대부분 체크 예외로 만들어져 있다.`
 - `컴파일 단계`에서 `명확하게 Exception 체크가 가능한것`을 `Checked Exception`이라 한다.
+
+### RuntimeException과 언체크/런타임 예외
+- RuntimeException 클래스를 상속한 예외들은 `명시적인 예외처리를 강제 하지 않기 때문에` 언체크 예외라 불린다. 또는 대표 클래스 이름을 따서 런타임 예외라고도 한다.
+- 런타임 예외는 주로 프로그램의 오류가 있을 때 발생하도록 의도 되었다.
+- 대표적으로 오브젝트를 할당하지 않은 레퍼런스 변수를 사용하려 시도했을 때 발생하는 NullPointerException, 허용되지 않은 값을 사용해서 메서드를 호출할 때 발생하는 IllegalArgumentException 등이 있다.
+- 이렇게 개발자가 부주의해서 발생할 수 있는 경우에 발생하도록 만든 것이 런타임 예외다.
 - `실행과정 중` 어떠한 `특정 논리에 의해 발견되는 Exception`을 `Unchecked Exception`이라 한다.
 
 구분 | Checked Exception | Unchecked Exception
@@ -115,6 +127,24 @@ public void someMethod() {
 - 명확한 의미로 전달되기 위해 적합한 의미를 가진 예외로 변경한다.
 - 예외 처리를 단순하게 만들기 위해 포장(Wrap) 할 수도 있다.
 
+<br>
+
+## 나쁜 습관
+
+<br>
+
+```java
+try {
+    ...
+} catch (SQLException e) {
+
+}
+```
+
+- 위 예제를 보면 try/catch를 사용해서 하였지만 예외 발생시 아무것도 하지 않고 그냥 넘어가 버렸다. 
+- 이렇게 그냥 넘어가는것은 위험하다. 왜냐하면 프로그램 실행중 오류가 있어서 예외가 발생하였는데 그것을 무시하고 계속 진행해버리기 때문이다.
+
 ## 참고
 - [자바 예외 구분](https://madplay.github.io/post/java-checked-unchecked-exceptions)
 - [Java 예외 처리에 대한 작은 생각](https://www.nextree.co.kr/p3239/)
+- 토비의 스프링
