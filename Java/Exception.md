@@ -75,7 +75,8 @@ public Object someMethod() {
 - 최대 재시도 횟수를 넘기면 예외를 발생시킨다.
 
 ### 예외 처리 회피
-처리를 하지 않고 호출한 쪽으로 던져버린다.
+- 예외처리를 하지 않고 호출한 쪽으로 던져버린다.
+- 예외처리를 회피하려면 반드시 다른 오브젝트나 메서드가 예외를 처리할 수 있도록 던져줘야 한다.
 
 ```java
 //예시 1
@@ -97,9 +98,12 @@ public void add() throws SQLException {
 - 위 예제는 간단해 보이지만 아주 신중해야하는 로직이다.
 - 예외가 발생하면 throws를 통해 호출한쪽으로 예외를 던지고 그 처리를 회피한다.
 - 무책임하게 던지는 것은 위험하며 호출한 쪽에서 다시 예외를 받아 처리하도록 하거나, 해당 메소드에서 이 예외를 던지는 것이 최선의 방법이라는 확신이 있을 때만 사용해야 한다.
+- 예외를 회피하는 것은 예외를 복구하는 것처럼 의도가 분명해야 한다.
+- 구체적인 예외를 던지기 귀찮아서 모든 예외를 생각없이 던지게 하는 throws Exception 사용을 피해야 한다.
 
 ### 예외 전환
-호출한 쪽으로 던질 때 명확한 의미를 전달하기 위해 다른 예외로 전환하여 던진다.
+- 예외를 처리하는 방법은 예외 전환을 하는 것이다.
+- 발생한 예외를 그대로 던지는게 아니라 적절한 예외(명확한 의미를 가진)로 전환하여 던지는 특징이 있다.
 
 ```java
 // 조금 더 명확한 예외로 던진다.
@@ -107,14 +111,21 @@ public void add(User user) throws DuplicateUserIdException, SQLException {
     try {
         ...
     } catch (SQLException e) {
+        // ErrorCode가 MySQL의 "Duplicate Entry(1062)"이면 예외 전환
         if (e.gerErrorCode() == MysqlErrorNumbers.ER_DUP_ENTRY) {
             throw DuplicateUserIdException();
         } else {
-            throw e;
+            throw e; // 그 외의 경우는 SQLException 그대로
         }
     }
 }
+```
+- 위 예제는 사용자 등록을 시도했을 때 같은 사용자가 있어서 DB 에러가 발생하여 SQLException이 발생하였다.
+- 서비스 계층에 그대로 SQLException을 던질 경우 왜 예외가 발생했는지 쉽게 알 방법이 없다.
+- 이럴때 의미를 분명하게 이해할 수 있는 DuplicateUserIdException을 던져 주면 적절한 복구 작업을 시도할 수 있다.
+- 서비스 계층에서 SQLException의 원인을 해석해서 대응하는 것도 불가능하지 않지만, 특정 기술의 정보를 해석하는 코드를 비즈니스 로직에 담는 것은 어색하다.
 
+```java
 // 예외를 단순하게 포장한다.
 public void someMethod() {
     try {
