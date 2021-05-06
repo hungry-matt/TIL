@@ -185,5 +185,31 @@ chmod +x ./deploy.sh
 
 ![image](https://user-images.githubusercontent.com/45548349/117258531-0950af00-ae88-11eb-8138-f1187e745414.png)
 
+# 3. 외부 Security 파일 등록하기
+해당 에러의 이유는 ClientRegistrationRepository를 생성하려면 cliendId와 clientSecret이 필수이다. 그런데 이 정보를 가진 application-oauth.properties가 외부로 공개가 되면 안되기에 프로젝트에 올라가 있지 않은 상태이다.
+
+그래서 이 정보를 서버에서 직접 가지고 있도록 하겠다.
+
+- 서버에서 가지고 있을 prpeties 파일을 생성한다.
+
+```
+vim /home/ec2-user/app/application-oauth-properties
+```
+
+- 로컬 프로젝트에 있는 application-oauth-properties 내용을 그대로 복사하여 넣고 다음과 같이 deploy.sh 파일을 수정한다.
+
+```sh
+nohup java -jar \
+-Dspring.config.location=classpath:/application.properties, /home/ec2-user/app/application-oauth.properties \
+$REPOSITORY/$JAR_NAME 2>&1 &
+```
+
+> -Dspring.config.location :
+> - 스프링 설정 파일 위치를 지정한다.
+> - classpath가 붙으면 jar 안에 있는 resources 디렉토리 기준으로 경로가 생성된다.
+> - application-oauth.properties 파일은 외부에 있기 때문에 절대경로를 사용한다.
+
+- 다시 배포 실행을 하여 확인한다.
+
 # Reference
 - 스프링 부트와 AWS로 혼자 구현하는 웹 서비스
