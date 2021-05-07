@@ -190,7 +190,7 @@ chmod +x ./deploy.sh
 
 그래서 이 정보를 서버에서 직접 가지고 있도록 하겠다.
 
-- 서버에서 가지고 있을 prpeties 파일을 생성한다.
+- 서버에서 가지고 있을 prperties 파일을 생성한다.
 
 ```
 vim /home/ec2-user/app/application-oauth-properties
@@ -210,6 +210,144 @@ $REPOSITORY/$JAR_NAME 2>&1 &
 > - application-oauth.properties 파일은 외부에 있기 때문에 절대경로를 사용한다.
 
 - 다시 배포 실행을 하여 확인한다.
+
+![image](https://user-images.githubusercontent.com/45548349/117264269-08bb1700-ae8e-11eb-952d-3293c5f9475b.png)
+
+# 4. 스프링 부트 프로젝트로 RDS 접근하기
+- RDS에서는 MariaDB를 사용중이다.
+- 이 MariaDB에서 스프링 부트 프로젝트를 사용하기 위해 다음과 같은 작업이 필요하다.
+
+```
+1. 테이블 생성 : H2에서 자동으로 생성해주던 테이블을 MariaDB에서 직접 생성해야 한다.
+
+2. 프로젝트 설정 : 자바 프로젝트가 MariaDB에 접근하기 위해서는 데이터베이스 드라이버가 필요하다. 사용 가능한 드라이버를 추가 한다.
+
+3. EC2(리눅스 서버) 설정 : 데이터베이스 접속 정보를 보호하기 위한 설정을 추가한다.
+```
+
+## RDS 테이블 생성
+- JPA가 사용될 엔티티 테이블
+```sql
+create table posts (
+    id bigint NOT NULL AUTO_INCREMENT,
+    created_date TIMESTAMP, 
+    modified_date TIMESTAMP, 
+    author varchar(255),
+    content TEXT not NULL,
+    title varchar(500) not NULL,
+    primary key (id)
+) engine=InnoDB;
+
+create table user (
+    id bigint NOT NULL auto_increment, 
+    created_date timestamp, 
+    modified_date timestamp, 
+    email varchar(255) not null, 
+    name varchar(255) not null, 
+    picture varchar(255), 
+    role varchar(255) not null, 
+    primary key (id)
+) engine=InnoDB;
+```
+- 스프링 세션 테이블
+
+프로젝트에서 schema-mysql.sql 파일을 검색하여 찾을수 있다.
+
+```sql
+CREATE TABLE SPRING_SESSION (
+	PRIMARY_ID CHAR(36) NOT NULL,
+	SESSION_ID CHAR(36) NOT NULL,
+	CREATION_TIME BIGINT NOT NULL,
+	LAST_ACCESS_TIME BIGINT NOT NULL,
+	MAX_INACTIVE_INTERVAL INT NOT NULL,
+	EXPIRY_TIME BIGINT NOT NULL,
+	PRINCIPAL_NAME VARCHAR(100),
+	CONSTRAINT SPRING_SESSION_PK PRIMARY KEY (PRIMARY_ID)
+) ENGINE=InnoDB ROW_FORMAT=DYNAMIC;
+
+CREATE UNIQUE INDEX SPRING_SESSION_IX1 ON SPRING_SESSION (SESSION_ID);
+CREATE INDEX SPRING_SESSION_IX2 ON SPRING_SESSION (EXPIRY_TIME);
+CREATE INDEX SPRING_SESSION_IX3 ON SPRING_SESSION (PRINCIPAL_NAME);
+
+CREATE TABLE SPRING_SESSION_ATTRIBUTES (
+	SESSION_PRIMARY_ID CHAR(36) NOT NULL,
+	ATTRIBUTE_NAME VARCHAR(200) NOT NULL,
+	ATTRIBUTE_BYTES BLOB NOT NULL,
+	CONSTRAINT SPRING_SESSION_ATTRIBUTES_PK PRIMARY KEY (SESSION_PRIMARY_ID, ATTRIBUTE_NAME),
+	CONSTRAINT SPRING_SESSION_ATTRIBUTES_FK FOREIGN KEY (SESSION_PRIMARY_ID) REFERENCES SPRING_SESSION(PRIMARY_ID) ON DELETE CASCADE
+) ENGINE=InnoDB ROW_FORMAT=DYNAMIC;
+
+```
+
+## 프로젝트 설정
+
+- 프로젝트에 있는 build.gradle 파일에 드라이버를 추가한다.
+
+```gradle
+compile("org.mariadb.jdbc:mariadb-java-client")
+```
+
+- 운영 서버에서 구동될 환경 설정을 추가한다.
+
+실제 운영 환경에서는 보안/로그상 이슈가 될 만한 설정들을 제거 하여 src/main/resources/ 에 application-real.properties 이름의 파일을 생성하여 다음 내용을 작성한다.
+
+```properties
+spring.profiles.include=oauth, real-db
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL5InnoDBDialect
+spring.session.store-type=jdbc
+```
+
+## EC2 설정
+
+- RDS 접속 정보도 보호해야 하므로 서버에 직접 설정 파일을 둔다.
+
+```
+vim ~/app/application-real-db.properties
+```
+
+- application-real-db.properties 파일에 다음과 같이 작성한다.
+
+```properties
+#1
+spring.jpa.hibernate.ddl-auto=none
+spring.datasource.url=jdbc:mariadb://rds주소:포트 번호/데이터베이스명
+spring.datasource.username=db계정
+spring.datasource.password=db계정 비밀번호
+spring.datasource.driver-class-name=org.mariadb.jdbc.Driver
+```
+
+> #1
+> - JPA로 테이블이 자동으로 생성되는 옵션을 none으로 지정한다.
+> - `실제 운영에서 사용될 테이블이니 스프링 부트에서 새로 만들지 않도록 주의해야 한다.`
+
+- 마지막으로 deploy.sh 파일에 real profile을 사용할 수 있도록 추가 한다.
+
+```sh
+nohup java -jar \
+-Dspring.config.location=classpath:/application.properties,/home/ec2-user/app/application-oauth.properties,/home/ec2-user/app/application-real-db.properties \
+-Dspring.profiles.active=real \
+$REPOSITORY/$JAR_NAME 2>&1 &
+```
+
+> -Dspring.profiles.active=real :
+> - application-real.properties를 활성화 시킨다.
+> - application-real.properties에 spring.profiles.include=oauth, real-db 옵션 때문에 application-real-db.properties 역시 함께 활성화 대상에 포함된다.
+
+- 마지막으로 배포 실행후 curl 명령어로 잘 실행 되는지 확인한다.
+
+```
+curl localhost:8080
+```
+
+# 구글에 EC2 주소 등록
+
+기존에 연결했던 구글 로그인 서비스가 작동하지 않는걸 확인할 수 있다. 해당 서비스에 EC2의 도메인을 등록하지 않았기 때문이다.
+
+- 다음과 같이 승인된 리디렉션 URI에 EC2의 퍼블릭 DNS를 등록한다.
+
+![image](https://user-images.githubusercontent.com/45548349/117288344-5c395f00-aea6-11eb-8b5d-92563f848bfd.png)
+
+
 
 # Reference
 - 스프링 부트와 AWS로 혼자 구현하는 웹 서비스
