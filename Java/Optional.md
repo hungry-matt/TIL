@@ -30,3 +30,70 @@ public void test(Long id) {
     Optional<User> user = userRepository.findById(id).orElseThrow(new Exception());
 }
 ```
+
+## Optional 객체 생성하기
+
+### Optinal.empty()
+
+- null을 담고 있는 비어있는 Optional 객체를 생성한다.
+
+- 내부적으로 미리 생성한 정적 인스턴스이다.
+
+```java
+public final class Optional<T> {
+    /**
+     * Common instance for {@code empty()}.
+     */
+    private static final Optional<?> EMPTY = new Optional<>();
+
+    private final T value;
+
+    private Optional() {
+        this.value = null;
+    }
+
+    public static<T> Optional<T> empty() {
+        @SuppressWarnings("unchecked")
+        Optional<T> t = (Optional<T>) EMPTY;
+        return t;
+    }
+}
+```
+
+### Optional.of(value)
+
+- null이 아닌 객체를 담고 있는 Optional 객체를 생성한다.
+
+- null이 올 경우 NPE를 던질수 있기 때문에 주의해서 사용해야한다.
+
+```java
+public final class Optional<T> {
+    /**
+     * Constructs an instance with the value present.
+     *
+     * @param value the non-null value to be present
+     * @throws NullPointerException if value is null
+     */
+    private Optional(T value) {
+        this.value = Objects.requireNonNull(value);
+    }
+
+    public static <T> Optional<T> of(T value) {
+        return new Optional<>(value);
+    }
+}
+```
+
+### Optional.ofNullable(value)
+
+- null이 아닌 객체를 담고 있는 Optional 객체를 생성한다.
+
+- null이 올 경우 Optional.empty()를 반환한다.
+
+```java
+public final class Optional<T> {
+    public static <T> Optional<T> ofNullable(T value) {
+        return value == null ? empty() : of(value);
+    }
+}
+```
